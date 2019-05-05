@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>
+    Begging Ensemble
+  </title>
+  <meta charset="utf-8">
+  <script src="http://localhost:8000/jquery.min.js"></script>
+  <script src="http://localhost:8000/ensemble.js" type="text/javascript"></script>
+  <script src="http://localhost:8000/tabletocsv.js" type="text/javascript"></script>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+
+<body>
+  <div class="jumbotron">
+    <div class="container">
+      <h1>
+        Begging Ensemble
+      </h1>
+      <h4>Machine Learning</h4>
+    </div>
+  </div>
+  <div class="container">
+    <h3 class="mb-3">Hasil ensemble</h3>
+    <div id="results"></div>
+  </div>
+  <script type="text/javascript">
+    $(() => {
+      $.ajax({
+        url: "http://localhost:8000/TrainsetTugas4ML.csv",
+        dataType: "text",
+        success: function (data) {
+          dataTrain = data.split(/\r?\n|\r/);
+          for (var i = 0; i < dataTrain.length - 2; i++) {
+            startProcess(dataTrain[i + 1].split(","));
+          }
+          generateTrain();
+          compileProcess();
+        }
+      });
+
+      function compileProcess() {
+        $.ajax({
+          url: "http://localhost:8000/TestsetTugas4ML.csv",
+          dataType: "text",
+          success: function (data) {
+            datatest = data.split(/\r?\n|\r/);
+            for (var i = 0; i < datatest.length - 2; i++) {
+              $('#results').append(
+                "<span>" + getLabel([datatest[i + 1].split(",")[0], datatest[i + 1].split(",")[1]]) +
+                ", </span>"
+              );
+            }
+            toCsv("TebakanTugas4ML.csv");
+          }
+        });
+      };
+    });
+  </script>
+</body>
+
+</html>
